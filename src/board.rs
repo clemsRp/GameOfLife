@@ -1,30 +1,26 @@
 
+use crate::constants::{OFFSETS, ALIVE_CHAR, DEAD_CHAR};
+
 #[derive(Clone, Copy, PartialEq)]
 enum Cell {
     Alive,
     Dead,
 }
 
-struct Board {
-    size: u8,
+pub struct Board {
+    size: usize,
     board :Vec<Vec<Cell>>,
 }
 
-const OFFSETS: [(i32, i32); 8] = [
-    (-1, -1), (0, -1), (1, -1),
-    (-1,  0),          (1,  0),
-    (-1,  1), (0,  1), (1,  1),
-];
-
 impl Board {
-    fn new(size: u8) -> Board {
+    pub fn new(size: usize) -> Board {
         Board{
             size: size,
             board: vec![vec![Cell::Dead; size]; size],
         }
     }
 
-    fn next(&mut self) {
+    pub fn next(&mut self) {
         // Init new board
         let mut new_board = Board::new(self.size);
 
@@ -38,7 +34,7 @@ impl Board {
 
                 // Update cell status if needed
                 if born || stay_alive {
-                    new_board[y][x] = Cell::Alive;
+                    new_board.board[y][x] = Cell::Alive;
                 }
             }
         }
@@ -63,4 +59,30 @@ impl Board {
             })
             .count()
     }
+
+	pub fn make_alive(&mut self, x: usize, y: usize) {
+		if x < self.size && y < self.size {
+			self.board[y][x] = Cell::Alive;
+		}
+	}
+
+	pub fn display(&self) {
+		// Range y and x
+		for y in 0..self.size {
+			for x in 0..self.size {
+				// Display character
+				let char = {
+					if self.board[y][x] == Cell::Alive {
+						ALIVE_CHAR
+					} else {
+						DEAD_CHAR
+					}
+				};
+
+				print!("{}", char);
+			}
+
+			print!("\n");
+		}
+	}
 }
