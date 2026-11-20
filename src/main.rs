@@ -2,6 +2,7 @@
 use std::env;
 use std::time::Duration;
 use std::thread;
+use rand::RngExt;
 
 mod board;
 use board::{Board};
@@ -10,18 +11,19 @@ mod constants;
 use constants::MILLI_GAP;
 
 fn init_board(size: usize) -> Board {
-	// Init board
-	let mut board = Board::new(size);
-	let middle = size / 2;
+    let mut board = Board::new(size);
+	let mut rng = rand::rng();
 
-	// Init starting cells
-	board.make_alive(middle, middle + 1);
-    board.make_alive(middle + 1, middle + 2);
-    board.make_alive(middle + 2, middle);
-    board.make_alive(middle + 2, middle + 1);
-    board.make_alive(middle + 2, middle + 2);
+	// Make alive random cells
+	for y in 0..size {
+		for x in 0..size {
+			if rng.random_bool(0.35) {
+				board.make_alive(x, y);
+			}
+		}
+	}
 
-	board
+    board
 }
 
 fn main() {
